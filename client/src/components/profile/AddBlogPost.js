@@ -1,11 +1,25 @@
 
+import axios from 'axios';
 import React from 'react'
+import { useForm } from "react-hook-form";
 
 const AddBlogPost = () => {
+    const { register, handleSubmit, reset, formState: { errors } } = useForm();
+    const onSubmit = (data) => {
+        axios.post('http://localhost:3001/posts', data)
+            .then((response) => {
+                console.log('IT WORKED');
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+
+        reset()
+    }
     return (
         <div className='relative bg-gray-50 pt-16 pb-20 px-4 sm:px-6 lg:pt-24 lg:pb-28 lg:px-8'>
             <div className='relative max-w-2xl mx-auto'>
-                <form className="divide-gray-200">
+                <form className="divide-gray-200" onSubmit={handleSubmit(onSubmit)}>
                     <div className=" divide-gray-200">
                         <div>
                             <div>
@@ -14,35 +28,51 @@ const AddBlogPost = () => {
                             <div className="mt-6 space-y-6">
                                 <div className="sm:col-span-4">
                                     <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                                        Name
+                                        Title
                                     </label>
                                     <div className="mt-1">
                                         <input
-                                            type="email"
-                                            name="email"
+                                            type="text"
+                                            {...register("title")}
                                             id="email"
-                                            className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-sm py-2 outline-hidden"
+                                            className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-sm py-2 outline-hidden px-3"
                                         />
+                                        {errors.title && <span>This field is required</span>}
                                     </div>
                                 </div>
 
                                 <div className="sm:col-span-6">
-                                    <label htmlFor="about" className="block text-sm font-medium text-gray-700">
-                                        Text
+                                    <label htmlFor="postText" className="block text-sm font-medium text-gray-700">
+                                        Descriptions
                                     </label>
                                     <div className="mt-1">
                                         <textarea
-                                            id="about"
-                                            name="about"
+                                            id="postText"
+                                            {...register("postText")}
                                             rows={6}
-                                            className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-sm"
+                                            className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-sm px-3"
                                             defaultValue={''}
                                         />
+                                        {errors.postText && <span>This field is required</span>}
                                     </div>
                                     <p className="mt-2 text-sm text-gray-500">Write Blogs</p>
                                 </div>
+                                <div className="sm:col-span-4">
+                                    <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                                        Creator
+                                    </label>
+                                    <div className="mt-1">
+                                        <input
+                                            type="text"
+                                            {...register("userName")}
+                                            id="email"
+                                            className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-sm py-2 outline-hidden px-3"
+                                        />
+                                        {errors.userName && <span>This field is required</span>}
+                                    </div>
+                                </div>
 
-                                <div className="sm:col-span-6">
+                                {/* <div className="sm:col-span-6">
                                     <label htmlFor="photo" className="block text-sm font-medium text-gray-700">
                                         Photo
                                     </label>
@@ -54,7 +84,7 @@ const AddBlogPost = () => {
                                         </span>
                                         <button
                                             type="button"
-                                            className="ml-5 bg-white py-2 px-3 border border-gray-300 rounded-sm shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                            className="ml-5 bg-white py-2 px-3 border border-gray-300 rounded-sm shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
                                         >
                                             Change
                                         </button>
@@ -84,7 +114,7 @@ const AddBlogPost = () => {
                                             <div className="flex text-sm text-gray-600">
                                                 <label
                                                     htmlFor="file-upload"
-                                                    className="relative cursor-pointer bg-white rounded-sm font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+                                                    className="relative cursor-pointer bg-white rounded-sm font-medium text-sky-600 hover:text-sky-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-sky-500"
                                                 >
                                                     <span>Upload a file</span>
                                                     <input id="file-upload" name="file-upload" type="file" className="sr-only" />
@@ -94,21 +124,15 @@ const AddBlogPost = () => {
                                             <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
                                         </div>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
                     <div className="pt-5">
-                        <div className="flex justify-end">
-                            <button
-                                type="button"
-                                className="bg-white py-2 px-4 border border-gray-300 rounded-sm shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                            >
-                                Cancel
-                            </button>
+                        <div className="">
                             <button
                                 type="submit"
-                                className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-sm text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
                             >
                                 Save
                             </button>
