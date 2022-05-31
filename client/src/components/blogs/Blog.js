@@ -1,16 +1,37 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 const Blog = () => {
+    const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const { id } = useParams();
     const [post, setPost] = useState([])
+    const [comments, setComments] = useState([]);
     useEffect(() => {
         axios.get(`http://localhost:3001/posts/byId/${id}`).then((response) => {
             setPost(response.data)
-            console.log(response.data);
+        })
+        axios.get(`http://localhost:3001/comments/${id}`).then((response) => {
+            setComments(response.data)
         })
     }, [setPost])
+
+    const onSubmit = (data) => {
+        axios.post('http://localhost:3001/comments', {
+            postId: id,
+            commentBody: data.commentBody
+        })
+            .then((response) => {
+                const commentToAdd = { commentBody: data.commentBody };
+                setComments([...comments, commentToAdd]);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+
+        reset()
+    }
     return (
         <div className="relative py-16 bg-white overflow-hidden">
             <div className="hidden lg:block lg:absolute lg:inset-y-0 lg:h-full lg:w-full">
@@ -94,19 +115,45 @@ const Blog = () => {
                         {post.postText}
                     </p>
                 </div>
-                <div className="mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
-
-
-                    {/* <figure>
-                        <img
-                            className="w-full rounded-lg"
-                            src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=facearea&w=1310&h=873&q=80&facepad=3"
-                            alt=""
-                            width={1310}
-                            height={873}
-                        />
-                        <figcaption>Sagittis scelerisque nulla cursus in enim consectetur quam.</figcaption>
-                    </figure> */}
+                <div className="mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto max-w-prose">
+                    All Comments
+                    <ul className='space-y-6'>
+                        {comments?.map((data) =>
+                            <li key={data.id} className="border p-4 border-teal-500">{data.commentBody}</li>
+                        )}
+                    </ul>
+                    <form className="divide-gray-200" onSubmit={handleSubmit(onSubmit)}>
+                        <div className=" divide-gray-200">
+                            <div>
+                                <div className="mt-6 space-y-6">
+                                    <div className="sm:col-span-6">
+                                        <label htmlFor="commentBody" className="block text-sm font-medium text-gray-700">
+                                            Comments
+                                        </label>
+                                        <div className="mt-1">
+                                            <textarea
+                                                id="commentBody"
+                                                {...register("commentBody")}
+                                                rows={6}
+                                                className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-sm px-3"
+                                            />
+                                            {errors.commentBody && <span>This field is required</span>}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="pt-5">
+                            <div className="">
+                                <button
+                                    type="submit"
+                                    className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-sm text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
+                                >
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </form>
 
                 </div>
             </div>

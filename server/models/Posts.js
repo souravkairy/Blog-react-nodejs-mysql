@@ -13,5 +13,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         }
     });
+
+    Posts.associate = (models) => {
+        Posts.hasMany(models.comments, {
+            onDelete: "cascade",
+        })
+    }
     return Posts
 };
